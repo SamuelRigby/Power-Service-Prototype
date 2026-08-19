@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from contextlib import asynccontextmanager
 
@@ -6,9 +7,10 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.core.database import close_mongo_connection, connect_to_mongo, get_database
+from app.models.client import ensure_indexes as ensure_client_indexes
 from app.models.customer import ensure_indexes as ensure_customer_indexes
 from app.models.power_source import ensure_indexes as ensure_power_source_indexes
-from app.routers import customers, health, power_sources
+from app.routers import auth, customers, health, power_sources
 
 logger = logging.getLogger(__name__)
 
@@ -17,17 +19,20 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     connect_to_mongo()
     db = get_database()
-    for ensure_fn, label in (
-        (ensure_customer_indexes, "customers"),
-        (ensure_power_source_indexes, "power_sources"),
-    ):
-        try:
-            await ensure_fn(db)
-        except Exception:
+    index_jobs = (
+        ("clients", ensure_client_indexes),
+        ("customers", ensure_customer_indexes),
+        ("power_sources", ensure_power_source_indexes),
+    )
+    results = await asyncio.gather(
+        *(ensure_fn(db) for _, ensure_fn in index_jobs), return_exceptions=True
+    )
+    for (label, _), result in zip(index_jobs, results):
+        if isinstance(result, Exception):
             logger.warning(
                 "Could not create MongoDB indexes for %s at startup (Mongo may be unreachable)",
                 label,
-                exc_info=True,
+                exc_info=result,
             )
     yield
     close_mongo_connection()
@@ -44,5 +49,6 @@ app.add_middleware(
 )
 
 app.include_router(health.router, prefix="/api/v1")
+app.include_router(auth.router, prefix="/api/v1")
 app.include_router(customers.router, prefix="/api/v1")
 app.include_router(power_sources.router, prefix="/api/v1")

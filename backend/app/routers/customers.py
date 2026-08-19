@@ -3,10 +3,11 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from pymongo.errors import DuplicateKeyError
 
 from app.core.database import get_database
+from app.core.security import get_current_client
 from app.models import customer as customer_repo
 from app.schemas.customer import CustomerCreate, CustomerResponse, CustomerUpdate
 
-router = APIRouter(prefix="/customers", tags=["customers"])
+router = APIRouter(prefix="/customers", tags=["customers"], dependencies=[Depends(get_current_client)])
 
 
 def _not_found(customer_id: str) -> HTTPException:

@@ -13,6 +13,10 @@ class Settings(BaseSettings):
     # CORS - comma-separated list of allowed origins for local frontend dev
     cors_origins: str = "http://localhost:3000"
 
+    # JWT auth. jwt_secret_key MUST be overridden (via env/.env) outside local dev.
+    jwt_secret_key: str = "insecure-dev-secret-change-me"
+    jwt_expiration_hours: int = 24
+
     @property
     def cors_origin_list(self) -> list[str]:
         return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]

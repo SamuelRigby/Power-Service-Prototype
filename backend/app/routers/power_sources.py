@@ -3,10 +3,13 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from pymongo.errors import DuplicateKeyError
 
 from app.core.database import get_database
+from app.core.security import get_current_client
 from app.models import power_source as power_source_repo
 from app.schemas.power_source import PowerSourceCreate, PowerSourceResponse, PowerSourceUpdate
 
-router = APIRouter(prefix="/power-sources", tags=["power-sources"])
+router = APIRouter(
+    prefix="/power-sources", tags=["power-sources"], dependencies=[Depends(get_current_client)]
+)
 
 
 def _not_found(power_source_id: str) -> HTTPException:
