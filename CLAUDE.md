@@ -38,6 +38,29 @@ Ongoing project memory: conventions and decisions made during the build, and got
 - **New deps**: `bcrypt==5.0.0`, `PyJWT==2.13.0` added to `requirements.txt`. `JWT_SECRET_KEY` and `JWT_EXPIRATION_HOURS` added to `.env.example` (secret is a clearly-labeled placeholder, not a real value).
 - Verified locally end-to-end against a throwaway `docker run mongo` container: signup, duplicate-username signup (409), login with wrong password / nonexistent user (both generic 401), successful login issuing a JWT, `/api/v1/customers` and `/api/v1/power-sources` returning 401 with no token and with a garbage token, 200 with a valid token, unique index on `clients.username` present via `getIndexes()`, and the stored client document confirmed to contain only a bcrypt hash, never plaintext.
 
+## Backend (Step 4 — recurring power scheduling grid)
+
+- **Not week-scoped**: the schedule is a single, static, cyclical template per client — Sunday through Saturday, reused every week. There is **no `week_start_date`, no per-week documents, and no history of past weeks**. An earlier version of this step modeled it as one document per client *per week*; that was wrong and has been fully removed (schema, router paths, and Mongo index). If you see any reference to `week_start_date` anywhere in the schedule code, it's a regression — the correct model is exactly one document per client, period.
+- **Document shape** (collection `schedules`, `app/models/schedule.py`): exactly one document per client —
+  ```json
+  {
+    "_id": ObjectId(...),
+    "client_username": "alice",
+    "grid": { "0": { "9": "<power_source_id>", "10": "<power_source_id>" }, "6": { "23": "<power_source_id>" } }
+  }
+  ```
+  The grid is **sparse** — only assigned slots are present, not a dense 7×24 matrix of nulls — and is looked up by `client_username` alone, never by Mongo `_id` or any date/week key; there's no `GET/PUT /schedules/{id}` route, so `ScheduleResponse` deliberately has no `id` field (a documented deviation from the step-2 four-schema pattern, which fits resources addressed by Mongo `_id`).
+- **Day/hour convention** (`app/schemas/schedule.py`): `grid` is `dict[Day, dict[Hour, str]]` where `Day = Annotated[int, Field(ge=0, le=6)]` (**0 = Sunday, 6 = Saturday**) and `Hour = Annotated[int, Field(ge=0, le=23)]`. The frontend scheduling grid (step 8) must use this exact 0=Sunday convention and these exact ranges — out-of-range values are rejected with 422 automatically by Pydantic (verified locally, with a clear per-key error message).
+- **Mongo key-type gotcha**: BSON documents only allow string keys — inserting a dict with `int` keys raises `bson.errors.InvalidDocument` (confirmed locally). The API schema uses `int` keys (`0`-`6`, `0`-`23`) per the spec, but the repository's `_grid_to_mongo` converts them to `str` keys before every write. Reads need no inverse conversion: Pydantic v2 automatically coerces the stored `str` keys (`"0"`, `"9"`, ...) back to `int` when the raw Mongo doc is validated against `ScheduleResponse` (also confirmed locally), so the router passes Mongo's `find_one`/`find_one_and_update` result straight through as the response body with no manual reshaping.
+- **Existence validation**: before every `PUT`, the router collects the distinct `power_source_id` values referenced anywhere in the incoming grid and calls `power_source_repo.get_power_source` for each; any that don't exist (including malformed-ObjectId strings, which `get_power_source` already treats as "not found") produce `400 {"detail": "Power source with id '<id>' does not exist"}` and nothing is written. This cross-resource check lives in the router, not in either repository module, so `app/models/schedule.py` stays scoped to schedule storage only.
+- **Per-client scoping**: `client_username` is taken *only* from `Depends(get_current_client)` (the JWT subject) — never from the request body or a query parameter — for both `GET` and `PUT`. A **single-field** unique index on `client_username` (`ensure_indexes` in `app/models/schedule.py`) guarantees exactly one document per client, ever; `PUT` upserts via `find_one_and_update(..., upsert=True)` keyed on `client_username` alone, so it's impossible for one client's request to read or overwrite another's schedule. Verified locally with two separate clients: independent grids, `db.schedules.countDocuments({})` staying at 1 per client across repeated `PUT`s, confirmed via `db.schedules.find()` that each stored document has no date/week field at all.
+- **`PUT` is a full replace, not a merge** — re-`PUT`ing a smaller grid discards the previously-set slots that aren't in the new payload (verified locally); `PUT`ting `{}` (or omitting `grid` entirely, which defaults to `{}`) clears the schedule without deleting the document.
+- **`GET` never 404s**: a client with no saved schedule yet gets back `200 {"grid": {}}` rather than 404 — verified locally.
+- **Router paths**: `GET /api/v1/schedules` and `PUT /api/v1/schedules` — no path parameter, since there's nothing to key the URL on beyond the caller's own identity.
+- **Router auth**: `dependencies=[Depends(get_current_client)]` on the `APIRouter(...)` itself, same as `customers`/`power_sources` (see step 3); each route additionally takes `client_username: str = Depends(get_current_client)` as a normal parameter, since (unlike those two routers) every handler here needs the actual identity, not just proof that *some* valid client is calling.
+- **Startup indexes**: `schedules` is a fourth entry in `main.py`'s `index_jobs` tuple (see step 3) — runs concurrently via `asyncio.gather` alongside the other three, so Mongo-unreachable boot time stays ~5s regardless of how many resources are added.
+- No new dependencies were needed for this step.
+
 ## Conventions carried forward from PLAN.md
 
 - REST endpoints: `/api/v1/<resource>`, JSON bodies.

@@ -42,7 +42,7 @@ PLAN.md (this document) is the feature spec. CLAUDE.md is ongoing project memory
 
 # Features
 
-The site should have a home page for visitors, a login/signup page for account creation and logging in, and a service page for clients who are logged in. The signup and login should only require a username and password since this is a prototype website. The service provides clients with a modifiable list of customers, a modifiable list of power sources, and a weekly power scheduling grid (sun-sat) that enables choosing power sources for the hours of all seven days, with each day having twenty-four hourly slots.
+The site should have a home page for visitors, a login/signup page for account creation and logging in, and a service page for clients who are logged in. The signup and login should only require a username and password since this is a prototype website. The service provides clients with a modifiable list of customers, a modifiable list of power sources, and a static, cyclical weekly power scheduling grid (Sunday through Saturday, repeating every week with no date attached) that enables choosing power sources for the hours of all seven days, with each day having twenty-four hourly slots.
 
 # Authentication
 
@@ -56,7 +56,7 @@ For each client's list of customers, the following information should be saved f
 
 For each client's list of power sources, the following information should be saved for each: power type (wind, hydro, solar, geothermal, natural gas, coal, nuclear, waste heat), instantaneous output in megawatts, and actual output in megawatt-hours.
 
-For each client's weekly power scheduling grid, save one document per client per week, structured as a mapping of day to hour to selected power source ID (e.g., {day: {hour: power_source_id}}).
+For each client's weekly power scheduling grid, save exactly one document per client (no date or week identifier), structured as a mapping of day to hour to selected power source ID (e.g., {day: {hour: power_source_id}}), where day is an integer 0–6 (0 = Sunday) and hour is an integer 0–23. This schedule is a recurring template reused every week, not tied to any specific calendar week.
 
 # SOAP Integration
 

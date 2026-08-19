@@ -10,7 +10,8 @@ from app.core.database import close_mongo_connection, connect_to_mongo, get_data
 from app.models.client import ensure_indexes as ensure_client_indexes
 from app.models.customer import ensure_indexes as ensure_customer_indexes
 from app.models.power_source import ensure_indexes as ensure_power_source_indexes
-from app.routers import auth, customers, health, power_sources
+from app.models.schedule import ensure_indexes as ensure_schedule_indexes
+from app.routers import auth, customers, health, power_sources, schedules
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +24,7 @@ async def lifespan(app: FastAPI):
         ("clients", ensure_client_indexes),
         ("customers", ensure_customer_indexes),
         ("power_sources", ensure_power_source_indexes),
+        ("schedules", ensure_schedule_indexes),
     )
     results = await asyncio.gather(
         *(ensure_fn(db) for _, ensure_fn in index_jobs), return_exceptions=True
@@ -52,3 +54,4 @@ app.include_router(health.router, prefix="/api/v1")
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(customers.router, prefix="/api/v1")
 app.include_router(power_sources.router, prefix="/api/v1")
+app.include_router(schedules.router, prefix="/api/v1")
