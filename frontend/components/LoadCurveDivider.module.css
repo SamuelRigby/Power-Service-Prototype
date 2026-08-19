@@ -1,0 +1,42 @@
+.wrapper {
+  position: relative;
+  background: var(--color-navy-deep);
+  overflow: hidden;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: 140px;
+}
+
+@media (min-width: 640px) {
+  .svg {
+    height: 180px;
+  }
+}
+
+.fill {
+  fill: var(--color-navy-mid);
+}
+
+.line {
+  stroke: var(--color-amber);
+  stroke-width: 2.5;
+}
+
+.caption {
+  position: absolute;
+  right: 1.5rem;
+  bottom: 0.85rem;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  color: var(--color-steel);
+}
+
+@media (min-width: 640px) {
+  .caption {
+    right: 2.5rem;
+  }
+}

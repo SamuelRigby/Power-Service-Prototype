@@ -1,0 +1,94 @@
+:root {
+  /* Infrastructure tones - deep transmission navy + steel, grounded in grid hardware */
+  --color-ink: #0e1a2b;
+  --color-navy-deep: #0b2545;
+  --color-navy-mid: #15304c;
+  --color-steel: #5b7085;
+  --color-steel-light: #c7d2db;
+
+  /* Energy accents - warm, not neon */
+  --color-amber: #f0a63a;
+  --color-amber-deep: #c97f1e;
+  --color-copper: #c1511e;
+  --color-copper-hover: #a54015;
+
+  /* Cool, pale surfaces - deliberately not cream */
+  --color-bg: #f3f6f8;
+  --color-bg-alt: #e8eef2;
+  --color-white: #ffffff;
+
+  --font-display: "Big Shoulders Display", "Arial Narrow", sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "Courier New", monospace;
+
+  --max-width: 1180px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.05;
+  margin: 0;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* Deliberate, visible keyboard focus - never suppressed without replacement */
+:focus-visible {
+  outline: 3px solid var(--color-amber);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding: 0 2.5rem;
+  }
+}

@@ -8,6 +8,7 @@ venv/
 # Env files
 .env
 backend/.env
+.env*.local
 
 # Node
 node_modules/
@@ -16,3 +17,6 @@ node_modules/
 # OS
 .DS_Store
 Thumbs.db
+
+# Playwright MCP tool output
+.playwright-mcp/
