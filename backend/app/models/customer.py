@@ -11,7 +11,9 @@ def _collection(db: AsyncIOMotorDatabase):
 
 
 async def ensure_indexes(db: AsyncIOMotorDatabase) -> None:
-    await _collection(db).create_index("service_account_number", unique=True)
+    await _collection(db).create_index(
+        [("client_username", 1), ("service_account_number", 1)], unique=True
+    )
 
 
 async def create_customer(db: AsyncIOMotorDatabase, data: dict) -> dict:
@@ -20,33 +22,42 @@ async def create_customer(db: AsyncIOMotorDatabase, data: dict) -> dict:
     return serialize_doc(created)
 
 
-async def list_customers(db: AsyncIOMotorDatabase) -> list[dict]:
-    return [serialize_doc(doc) async for doc in _collection(db).find()]
+async def list_customers(db: AsyncIOMotorDatabase, client_username: str) -> list[dict]:
+    return [
+        serialize_doc(doc)
+        async for doc in _collection(db).find({"client_username": client_username})
+    ]
 
 
-async def get_customer(db: AsyncIOMotorDatabase, customer_id: str) -> dict | None:
+async def get_customer(
+    db: AsyncIOMotorDatabase, customer_id: str, client_username: str
+) -> dict | None:
     oid = to_object_id(customer_id)
     if oid is None:
         return None
-    doc = await _collection(db).find_one({"_id": oid})
+    doc = await _collection(db).find_one({"_id": oid, "client_username": client_username})
     return serialize_doc(doc) if doc else None
 
 
-async def update_customer(db: AsyncIOMotorDatabase, customer_id: str, data: dict) -> dict | None:
+async def update_customer(
+    db: AsyncIOMotorDatabase, customer_id: str, client_username: str, data: dict
+) -> dict | None:
     oid = to_object_id(customer_id)
     if oid is None:
         return None
     if not data:
-        return await get_customer(db, customer_id)
+        return await get_customer(db, customer_id, client_username)
     doc = await _collection(db).find_one_and_update(
-        {"_id": oid}, {"$set": data}, return_document=ReturnDocument.AFTER
+        {"_id": oid, "client_username": client_username},
+        {"$set": data},
+        return_document=ReturnDocument.AFTER,
     )
     return serialize_doc(doc) if doc else None
 
 
-async def delete_customer(db: AsyncIOMotorDatabase, customer_id: str) -> bool:
+async def delete_customer(db: AsyncIOMotorDatabase, customer_id: str, client_username: str) -> bool:
     oid = to_object_id(customer_id)
     if oid is None:
         return False
-    result = await _collection(db).delete_one({"_id": oid})
+    result = await _collection(db).delete_one({"_id": oid, "client_username": client_username})
     return result.deleted_count == 1

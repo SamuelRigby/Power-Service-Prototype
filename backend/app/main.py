@@ -2,6 +2,7 @@ import asyncio
 import logging
 from contextlib import asynccontextmanager
 
+from a2wsgi import WSGIMiddleware
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -12,6 +13,7 @@ from app.models.customer import ensure_indexes as ensure_customer_indexes
 from app.models.power_source import ensure_indexes as ensure_power_source_indexes
 from app.models.schedule import ensure_indexes as ensure_schedule_indexes
 from app.routers import auth, customers, health, power_sources, schedules
+from app.soap.meter_reading_service import wsgi_app as soap_meter_reading_wsgi_app
 
 logger = logging.getLogger(__name__)
 
@@ -55,3 +57,7 @@ app.include_router(auth.router, prefix="/api/v1")
 app.include_router(customers.router, prefix="/api/v1")
 app.include_router(power_sources.router, prefix="/api/v1")
 app.include_router(schedules.router, prefix="/api/v1")
+
+# Mock legacy SOAP meter-reading service, mounted as a WSGI sub-app - architecturally
+# separate from the /api/v1 REST namespace, not modeled as an APIRouter.
+app.mount("/soap/meter-reading", WSGIMiddleware(soap_meter_reading_wsgi_app))

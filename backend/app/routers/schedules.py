@@ -31,7 +31,7 @@ async def put_schedule(
         power_source_id for hours in payload.grid.values() for power_source_id in hours.values()
     }
     for power_source_id in referenced_ids:
-        if await power_source_repo.get_power_source(db, power_source_id) is None:
+        if await power_source_repo.get_power_source(db, power_source_id, client_username) is None:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Power source with id '{power_source_id}' does not exist",

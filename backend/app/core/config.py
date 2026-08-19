@@ -17,6 +17,11 @@ class Settings(BaseSettings):
     jwt_secret_key: str = "insecure-dev-secret-change-me"
     jwt_expiration_hours: int = 24
 
+    # Mock SOAP meter-reading service. It's mounted inside this same app (see main.py),
+    # so this must point back at wherever this app is actually reachable from itself.
+    soap_meter_reading_url: str = "http://localhost:8000/soap/meter-reading"
+    soap_timeout_seconds: float = 5.0
+
     @property
     def cors_origin_list(self) -> list[str]:
         return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
