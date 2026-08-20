@@ -1,7 +1,7 @@
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pymongo import ReturnDocument
 
-from app.models.common import serialize_doc, to_object_id
+from app.models.common import drop_stale_unique_index, serialize_doc, to_object_id
 
 COLLECTION_NAME = "customers"
 
@@ -11,7 +11,9 @@ def _collection(db: AsyncIOMotorDatabase):
 
 
 async def ensure_indexes(db: AsyncIOMotorDatabase) -> None:
-    await _collection(db).create_index(
+    collection = _collection(db)
+    await drop_stale_unique_index(collection, [("service_account_number", 1)])
+    await collection.create_index(
         [("client_username", 1), ("service_account_number", 1)], unique=True
     )
 
