@@ -17,6 +17,11 @@ COPY . .
 ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 
+# Tells next.config.ts to turn on `output: "standalone"` - the runner stage
+# below depends on that output existing. Only set for this Docker build path;
+# see next.config.ts for why it's conditional instead of always-on.
+ENV BUILD_TARGET=docker
+
 RUN npm run build
 
 # ---- runner: slim runtime image, only the standalone output + static assets ----
