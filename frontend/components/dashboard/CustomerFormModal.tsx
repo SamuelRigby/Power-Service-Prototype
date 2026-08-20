@@ -4,7 +4,7 @@ import { type FormEvent, useState } from "react";
 import { ApiError } from "@/lib/api";
 import type { Customer, CustomerInput } from "@/lib/types";
 import { Modal } from "./Modal";
-import styles from "./ServiceForm.module.css";
+import styles from "./DashboardForm.module.css";
 
 interface CustomerFormModalProps {
   customer?: Customer;

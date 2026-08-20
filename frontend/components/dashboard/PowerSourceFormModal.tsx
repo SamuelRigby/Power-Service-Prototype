@@ -5,7 +5,7 @@ import { ApiError } from "@/lib/api";
 import { POWER_TYPES } from "@/lib/powerTypes";
 import type { PowerSource, PowerSourceInput, PowerType } from "@/lib/types";
 import { Modal } from "./Modal";
-import styles from "./ServiceForm.module.css";
+import styles from "./DashboardForm.module.css";
 
 interface PowerSourceFormModalProps {
   powerSource?: PowerSource;

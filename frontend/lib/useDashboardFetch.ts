@@ -6,16 +6,16 @@ import { ApiError, apiFetch, type ApiFetchOptions } from "./api";
 import { useAuth } from "./auth";
 
 /**
- * apiFetch, but for the authenticated /service area: attaches the stored
+ * apiFetch, but for the authenticated /dashboard area: attaches the stored
  * token automatically, and on a 401 (expired/invalid token) clears the
  * session and bounces to /login instead of leaving the page to fail silently.
  */
-export function useServiceFetch() {
+export function useDashboardFetch() {
   const { token, logout } = useAuth();
   const router = useRouter();
 
   return useCallback(
-    async function serviceFetch<T>(
+    async function dashboardFetch<T>(
       path: string,
       options: Omit<ApiFetchOptions, "token"> = {},
     ): Promise<T> {

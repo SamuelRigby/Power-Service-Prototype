@@ -29,9 +29,14 @@ export function Header() {
             What it does
           </Link>
           {token ? (
-            <button type="button" onClick={handleLogout} className={styles.logoutLink}>
-              Logout
-            </button>
+            <>
+              <button type="button" onClick={handleLogout} className={styles.logoutLink}>
+                Logout
+              </button>
+              <Link href="/dashboard" className={styles.navCta}>
+                Go to Dashboard
+              </Link>
+            </>
           ) : (
             <Link href="/login" className={styles.navCta}>
               Client Login

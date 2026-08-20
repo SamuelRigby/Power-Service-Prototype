@@ -1,8 +1,14 @@
+"use client";
+
 import Link from "next/link";
+import { useAuth } from "@/lib/auth";
 import { GridPattern } from "./GridPattern";
 import styles from "./Hero.module.css";
 
 export function Hero() {
+  const { token, isHydrated } = useAuth();
+  const signedIn = isHydrated && token !== null;
+
   return (
     <section className={styles.hero}>
       <GridPattern id="hero-grid" className={styles.pattern} />
@@ -20,8 +26,8 @@ export function Hero() {
           weekly power-scheduling grid.
         </p>
         <div className={styles.actions}>
-          <Link href="/login" className={styles.primaryCta}>
-            Client Login
+          <Link href={signedIn ? "/dashboard" : "/login"} className={styles.primaryCta}>
+            {signedIn ? "Go to Dashboard" : "Client Login"}
           </Link>
           <a href="#capabilities" className={styles.secondaryCta}>
             See what it does ↓

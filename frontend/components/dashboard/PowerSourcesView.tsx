@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useServiceFetch } from "@/lib/useServiceFetch";
+import { useDashboardFetch } from "@/lib/useDashboardFetch";
 import type { PowerSource, PowerSourceInput } from "@/lib/types";
 import { PowerSourceFormModal } from "./PowerSourceFormModal";
 import { PowerSourceRow } from "./PowerSourceRow";
@@ -10,26 +10,26 @@ import styles from "./PowerSourcesView.module.css";
 type ModalState = { mode: "create" } | { mode: "edit"; powerSource: PowerSource } | null;
 
 export function PowerSourcesView() {
-  const serviceFetch = useServiceFetch();
+  const dashboardFetch = useDashboardFetch();
   const [powerSources, setPowerSources] = useState<PowerSource[] | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [modalState, setModalState] = useState<ModalState>(null);
 
   const loadPowerSources = useCallback(async () => {
     try {
-      const data = await serviceFetch<PowerSource[]>("/api/v1/power-sources");
+      const data = await dashboardFetch<PowerSource[]>("/api/v1/power-sources");
       setPowerSources(data);
       setLoadError(null);
     } catch {
       setLoadError("Couldn't load power sources. Try refreshing the page.");
     }
-  }, [serviceFetch]);
+  }, [dashboardFetch]);
 
   useEffect(() => {
     let ignore = false;
     async function initialLoad() {
       try {
-        const data = await serviceFetch<PowerSource[]>("/api/v1/power-sources");
+        const data = await dashboardFetch<PowerSource[]>("/api/v1/power-sources");
         if (!ignore) {
           setPowerSources(data);
           setLoadError(null);
@@ -44,20 +44,20 @@ export function PowerSourcesView() {
     return () => {
       ignore = true;
     };
-  }, [serviceFetch]);
+  }, [dashboardFetch]);
 
   async function handleCreate(data: PowerSourceInput) {
-    await serviceFetch("/api/v1/power-sources", { method: "POST", body: data });
+    await dashboardFetch("/api/v1/power-sources", { method: "POST", body: data });
     await loadPowerSources();
   }
 
   async function handleUpdate(id: string, data: PowerSourceInput) {
-    await serviceFetch(`/api/v1/power-sources/${id}`, { method: "PUT", body: data });
+    await dashboardFetch(`/api/v1/power-sources/${id}`, { method: "PUT", body: data });
     await loadPowerSources();
   }
 
   async function handleDelete(id: string) {
-    await serviceFetch(`/api/v1/power-sources/${id}`, { method: "DELETE" });
+    await dashboardFetch(`/api/v1/power-sources/${id}`, { method: "DELETE" });
     await loadPowerSources();
   }
 

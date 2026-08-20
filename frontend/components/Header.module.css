@@ -86,4 +86,12 @@
   .platformLink {
     display: none;
   }
+
+  /* Same reasoning as .platformLink above: not enough width for every nav
+     item at once, so the mobile header keeps only the primary CTA -
+     "Go to Dashboard" here, since Logout is always reachable from the
+     dashboard's own nav once inside it. */
+  .logoutLink {
+    display: none;
+  }
 }

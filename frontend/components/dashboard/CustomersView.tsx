@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useServiceFetch } from "@/lib/useServiceFetch";
+import { useDashboardFetch } from "@/lib/useDashboardFetch";
 import type { Customer, CustomerInput, PaymentRecord } from "@/lib/types";
 import { CustomerCard } from "./CustomerCard";
 import { CustomerFormModal } from "./CustomerFormModal";
@@ -10,26 +10,26 @@ import styles from "./CustomersView.module.css";
 type ModalState = { mode: "create" } | { mode: "edit"; customer: Customer } | null;
 
 export function CustomersView() {
-  const serviceFetch = useServiceFetch();
+  const dashboardFetch = useDashboardFetch();
   const [customers, setCustomers] = useState<Customer[] | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [modalState, setModalState] = useState<ModalState>(null);
 
   const loadCustomers = useCallback(async () => {
     try {
-      const data = await serviceFetch<Customer[]>("/api/v1/customers");
+      const data = await dashboardFetch<Customer[]>("/api/v1/customers");
       setCustomers(data);
       setLoadError(null);
     } catch {
       setLoadError("Couldn't load customers. Try refreshing the page.");
     }
-  }, [serviceFetch]);
+  }, [dashboardFetch]);
 
   useEffect(() => {
     let ignore = false;
     async function initialLoad() {
       try {
-        const data = await serviceFetch<Customer[]>("/api/v1/customers");
+        const data = await dashboardFetch<Customer[]>("/api/v1/customers");
         if (!ignore) {
           setCustomers(data);
           setLoadError(null);
@@ -44,26 +44,26 @@ export function CustomersView() {
     return () => {
       ignore = true;
     };
-  }, [serviceFetch]);
+  }, [dashboardFetch]);
 
   async function handleCreate(data: CustomerInput) {
-    await serviceFetch("/api/v1/customers", { method: "POST", body: data });
+    await dashboardFetch("/api/v1/customers", { method: "POST", body: data });
     await loadCustomers();
   }
 
   async function handleUpdate(id: string, data: CustomerInput) {
-    await serviceFetch(`/api/v1/customers/${id}`, { method: "PUT", body: data });
+    await dashboardFetch(`/api/v1/customers/${id}`, { method: "PUT", body: data });
     await loadCustomers();
   }
 
   async function handleDelete(id: string) {
-    await serviceFetch(`/api/v1/customers/${id}`, { method: "DELETE" });
+    await dashboardFetch(`/api/v1/customers/${id}`, { method: "DELETE" });
     await loadCustomers();
   }
 
   async function handleAddPayment(customer: Customer, record: PaymentRecord) {
     const updated = [...customer.payment_history, record];
-    await serviceFetch(`/api/v1/customers/${customer.id}`, {
+    await dashboardFetch(`/api/v1/customers/${customer.id}`, {
       method: "PUT",
       body: { payment_history: updated },
     });
@@ -72,7 +72,7 @@ export function CustomersView() {
 
   async function handleRemovePayment(customer: Customer, index: number) {
     const updated = customer.payment_history.filter((_, i) => i !== index);
-    await serviceFetch(`/api/v1/customers/${customer.id}`, {
+    await dashboardFetch(`/api/v1/customers/${customer.id}`, {
       method: "PUT",
       body: { payment_history: updated },
     });

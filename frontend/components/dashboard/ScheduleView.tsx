@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { useServiceFetch } from "@/lib/useServiceFetch";
+import { useDashboardFetch } from "@/lib/useDashboardFetch";
 import { ERASER, type PaintTool } from "@/lib/schedule";
 import type { PowerSource, Schedule, ScheduleGrid as ScheduleGridData } from "@/lib/types";
 import { ScheduleLegend } from "./ScheduleLegend";
@@ -11,7 +11,7 @@ import { ScheduleGrid } from "./ScheduleGrid";
 import styles from "./ScheduleView.module.css";
 
 export function ScheduleView() {
-  const serviceFetch = useServiceFetch();
+  const dashboardFetch = useDashboardFetch();
   const [powerSources, setPowerSources] = useState<PowerSource[] | null>(null);
   const [grid, setGrid] = useState<ScheduleGridData | null>(null);
   const [isDirty, setIsDirty] = useState(false);
@@ -25,8 +25,8 @@ export function ScheduleView() {
     async function initialLoad() {
       try {
         const [scheduleData, sourcesData] = await Promise.all([
-          serviceFetch<Schedule>("/api/v1/schedules"),
-          serviceFetch<PowerSource[]>("/api/v1/power-sources"),
+          dashboardFetch<Schedule>("/api/v1/schedules"),
+          dashboardFetch<PowerSource[]>("/api/v1/power-sources"),
         ]);
         if (!ignore) {
           setGrid(scheduleData.grid);
@@ -43,7 +43,7 @@ export function ScheduleView() {
     return () => {
       ignore = true;
     };
-  }, [serviceFetch]);
+  }, [dashboardFetch]);
 
   const powerSourcesById = useMemo(() => {
     const map = new Map<string, PowerSource>();
@@ -79,7 +79,7 @@ export function ScheduleView() {
     setSaving(true);
     setSaveError(null);
     try {
-      const result = await serviceFetch<Schedule>("/api/v1/schedules", {
+      const result = await dashboardFetch<Schedule>("/api/v1/schedules", {
         method: "PUT",
         body: { grid: grid ?? {} },
       });
@@ -133,7 +133,7 @@ export function ScheduleView() {
           <p className={styles.emptyBody}>
             Add a power source before building your weekly schedule.
           </p>
-          <Link href="/service/power-sources" className={styles.addButton}>
+          <Link href="/dashboard/power-sources" className={styles.addButton}>
             Go to Power Sources
           </Link>
         </div>

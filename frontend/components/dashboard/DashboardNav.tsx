@@ -4,19 +4,19 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { NodeMark } from "../icons";
-import styles from "./ServiceNav.module.css";
+import styles from "./DashboardNav.module.css";
 
 const links = [
-  { href: "/service/customers", label: "Customers" },
-  { href: "/service/power-sources", label: "Power Sources" },
-  { href: "/service/schedule", label: "Schedule" },
+  { href: "/dashboard/customers", label: "Customers" },
+  { href: "/dashboard/power-sources", label: "Power Sources" },
+  { href: "/dashboard/schedule", label: "Schedule" },
 ];
 
-export function ServiceNav() {
+export function DashboardNav() {
   const pathname = usePathname();
   const { logout } = useAuth();
 
-  // No explicit navigation here - clearing the token is enough. ServiceShell's
+  // No explicit navigation here - clearing the token is enough. DashboardShell's
   // own guard reacts to the token going null and redirects to /login, since
   // it can't render its children without one anyway; a second redirect here
   // would just race it.
@@ -27,13 +27,13 @@ export function ServiceNav() {
   return (
     <header className={styles.header}>
       <div className={`container ${styles.inner}`}>
-        <Link href="/service" className={styles.brand}>
+        <Link href="/" className={styles.brand}>
           <NodeMark className={styles.mark} />
           <span>
             Power Service<span className={styles.brandLight}> Prototype</span>
           </span>
         </Link>
-        <nav className={styles.nav} aria-label="Service">
+        <nav className={styles.nav} aria-label="Dashboard">
           {links.map((link) => (
             <Link
               key={link.href}

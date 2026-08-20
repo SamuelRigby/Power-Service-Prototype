@@ -126,7 +126,18 @@ docker service logs power-service_backend  # -f to follow
 docker service ps power-service_backend    # which node(s) it's running on, current/desired state
 ```
 
-**6. Scale something, just to see it work:**
+**6. Redeploying after a code change:**
+
+```bash
+docker build -t power-service-backend:latest ./backend
+docker build --build-arg NEXT_PUBLIC_API_URL="" -t power-service-frontend:swarm ./frontend
+docker service update --force power-service_backend
+docker service update --force power-service_frontend
+```
+
+Rebuilding the images alone is **not enough** once the stack is already deployed - re-running `docker stack deploy` won't pick up the new image content. Swarm only compares the service spec (`power-service-backend:latest` as a plain tag string) against what's already running; with no registry involved, it has no way to know the tag now points at different content locally, so an unchanged spec means it skips redeploying that service entirely. The `docker service update --force` on each service is what actually makes it re-resolve the tag and start fresh containers from the image you just built. This is specific to updating an *already-running* Swarm stack - a first-time `docker stack deploy` (step 4 above) and `docker compose up --build` (Option B) don't have this problem.
+
+**7. Scale something, just to see it work:**
 
 ```bash
 docker service scale power-service_backend=3
@@ -134,7 +145,7 @@ docker service scale power-service_backend=3
 
 No other configuration changes needed - nginx keeps routing correctly without touching `docker-stack.yml` or reloading anything, since Swarm resolves the `backend` service name to a stable virtual IP that it load-balances across however many replicas exist behind it. (Don't scale `mongo` past 1 replica this way - that would need a real MongoDB replica set, which this prototype doesn't set up.)
 
-**7. Tear down:**
+**8. Tear down:**
 
 ```bash
 docker stack rm power-service

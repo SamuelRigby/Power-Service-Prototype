@@ -3,10 +3,10 @@
 import { useEffect, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
-import { ServiceNav } from "./ServiceNav";
-import styles from "./ServiceShell.module.css";
+import { DashboardNav } from "./DashboardNav";
+import styles from "./DashboardShell.module.css";
 
-export function ServiceShell({ children }: { children: ReactNode }) {
+export function DashboardShell({ children }: { children: ReactNode }) {
   const { token, isHydrated } = useAuth();
   const router = useRouter();
 
@@ -26,7 +26,7 @@ export function ServiceShell({ children }: { children: ReactNode }) {
 
   return (
     <>
-      <ServiceNav />
+      <DashboardNav />
       <main className={styles.main}>{children}</main>
     </>
   );

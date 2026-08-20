@@ -36,7 +36,7 @@ export function LoginForm() {
         body: { username: username.trim(), password },
       });
       login(result.access_token);
-      router.push("/service");
+      router.push("/dashboard");
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
         setError("Incorrect username or password.");

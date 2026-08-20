@@ -45,7 +45,7 @@ export function SignupForm() {
           body: { username: trimmedUsername, password },
         });
         login(result.access_token);
-        router.push("/service");
+        router.push("/dashboard");
       } catch {
         router.push("/login");
       }
