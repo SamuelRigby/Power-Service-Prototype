@@ -16,6 +16,12 @@ services:
   backend:
     build:
       context: ./backend
+    # Named explicitly (rather than left to Compose's auto-generated name) so
+    # docker-stack.yml (step 10) can reference the exact same, already-built
+    # image - Swarm doesn't build images itself, only pulls/reuses existing
+    # ones. This image is topology-agnostic (no build args), so it's safe to
+    # reuse as-is between Compose and Swarm without rebuilding.
+    image: power-service-backend:latest
     restart: unless-stopped
     environment:
       # The Compose service name above, not localhost - see CLAUDE.md for why
@@ -36,6 +42,11 @@ services:
         # This has to be an address the *browser* on the host can reach, not the
         # backend's in-network service name - see CLAUDE.md for the full reasoning.
         NEXT_PUBLIC_API_URL: http://localhost:8000
+    # NOT reused by docker-stack.yml (step 10), unlike the backend image above -
+    # that topology puts nginx in front and needs a *different*
+    # NEXT_PUBLIC_API_URL baked in (a relative path, not this absolute one), so
+    # it builds its own image under a different tag. See CLAUDE.md.
+    image: power-service-frontend:latest
     restart: unless-stopped
     ports:
       - "3000:3000"
