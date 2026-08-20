@@ -1,0 +1,96 @@
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-copper);
+  margin-bottom: 0.5rem;
+}
+
+.heading {
+  color: var(--color-navy-deep);
+  font-size: 1.9rem;
+  margin-bottom: 1.75rem;
+}
+
+.error {
+  background: rgba(193, 81, 30, 0.08);
+  border-left: 3px solid var(--color-copper);
+  color: var(--color-ink);
+  padding: 0.7rem 0.9rem;
+  font-size: 0.9rem;
+  margin-bottom: 1.25rem;
+  border-radius: 2px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+}
+
+.field label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.field input {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--color-steel-light);
+  border-radius: 4px;
+  background: var(--color-white);
+  color: var(--color-ink);
+  transition: border-color 0.15s ease;
+}
+
+.field input:focus {
+  border-color: var(--color-copper);
+}
+
+.submit {
+  background: var(--color-copper);
+  color: var(--color-white);
+  border: none;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.85rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background-color 0.15s ease;
+}
+
+.submit:hover:not(:disabled) {
+  background: var(--color-copper-hover);
+}
+
+.submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.switch {
+  margin-top: 1.75rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--color-steel);
+}
+
+.switch a {
+  color: var(--color-copper);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.switch a:hover {
+  text-decoration: underline;
+}

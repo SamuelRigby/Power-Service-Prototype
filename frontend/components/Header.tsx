@@ -1,8 +1,20 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth";
 import { NodeMark } from "./icons";
 import styles from "./Header.module.css";
 
 export function Header() {
+  const { token, logout } = useAuth();
+  const router = useRouter();
+
+  function handleLogout() {
+    logout();
+    router.push("/");
+  }
+
   return (
     <header className={styles.header}>
       <div className={`container ${styles.inner}`}>
@@ -13,12 +25,18 @@ export function Header() {
           </span>
         </Link>
         <nav className={styles.nav} aria-label="Primary">
-          <a href="#capabilities" className={styles.platformLink}>
+          <Link href="/#capabilities" className={styles.platformLink}>
             What it does
-          </a>
-          <Link href="/login" className={styles.navCta}>
-            Client Login
           </Link>
+          {token ? (
+            <button type="button" onClick={handleLogout} className={styles.logoutLink}>
+              Logout
+            </button>
+          ) : (
+            <Link href="/login" className={styles.navCta}>
+              Client Login
+            </Link>
+          )}
         </nav>
       </div>
     </header>

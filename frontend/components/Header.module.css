@@ -54,6 +54,20 @@
   color: var(--color-white);
 }
 
+.logoutLink {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--color-steel-light);
+  font-size: 0.9rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.logoutLink:hover {
+  color: var(--color-white);
+}
+
 .navCta {
   background: var(--color-copper);
   color: var(--color-white) !important;
