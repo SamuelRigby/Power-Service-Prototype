@@ -1,0 +1,46 @@
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  backend:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    environment:
+      # The Compose service name above, not localhost - see CLAUDE.md for why
+      # this differs from running the backend outside Docker.
+      MONGO_URI: mongodb://mongo:27017
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-insecure-dev-secret-change-me}
+    ports:
+      - "8000:8000"
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # Baked into the client JS bundle at build time (see frontend/Dockerfile).
+        # This has to be an address the *browser* on the host can reach, not the
+        # backend's in-network service name - see CLAUDE.md for the full reasoning.
+        NEXT_PUBLIC_API_URL: http://localhost:8000
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:
