@@ -21,14 +21,22 @@ export function CustomerCard({
 }: CustomerCardProps) {
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const [paymentDate, setPaymentDate] = useState("");
   const [paymentAmount, setPaymentAmount] = useState("");
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [addingPayment, setAddingPayment] = useState(false);
+  const [removingPayment, setRemovingPayment] = useState(false);
 
   async function handleConfirmDelete() {
     setDeleting(true);
-    await onDelete();
+    setDeleteError(null);
+    try {
+      await onDelete();
+    } catch {
+      setDeleteError("Couldn't delete this customer. Please try again.");
+      setDeleting(false);
+    }
   }
 
   async function handleAddPayment(event: FormEvent<HTMLFormElement>) {
@@ -45,9 +53,21 @@ export function CustomerCard({
       setPaymentDate("");
       setPaymentAmount("");
     } catch {
-      setPaymentError("Couldn't add that payment. Try again.");
+      setPaymentError("Couldn't add that payment. Please try again.");
     } finally {
       setAddingPayment(false);
+    }
+  }
+
+  async function handleRemovePayment(index: number) {
+    setPaymentError(null);
+    setRemovingPayment(true);
+    try {
+      await onRemovePayment(index);
+    } catch {
+      setPaymentError("Couldn't remove that payment. Please try again.");
+    } finally {
+      setRemovingPayment(false);
     }
   }
 
@@ -63,23 +83,29 @@ export function CustomerCard({
         </div>
         <div className={styles.actions}>
           {confirmingDelete ? (
-            <div className={styles.confirmRow}>
-              <span>Delete this customer?</span>
-              <button
-                type="button"
-                onClick={handleConfirmDelete}
-                className={styles.confirmDeleteButton}
-                disabled={deleting}
-              >
-                {deleting ? "Deleting…" : "Yes, delete"}
-              </button>
-              <button
-                type="button"
-                onClick={() => setConfirmingDelete(false)}
-                className={styles.cancelButton}
-              >
-                Cancel
-              </button>
+            <div className={styles.confirmWrap}>
+              <div className={styles.confirmRow}>
+                <span>Delete this customer?</span>
+                <button
+                  type="button"
+                  onClick={handleConfirmDelete}
+                  className={styles.confirmDeleteButton}
+                  disabled={deleting}
+                >
+                  {deleting ? "Deleting…" : "Yes, delete"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setConfirmingDelete(false);
+                    setDeleteError(null);
+                  }}
+                  className={styles.cancelButton}
+                >
+                  Cancel
+                </button>
+              </div>
+              {deleteError ? <p className={styles.deleteError}>{deleteError}</p> : null}
             </div>
           ) : (
             <>
@@ -127,9 +153,10 @@ export function CustomerCard({
                 <span>${payment.amount.toFixed(2)}</span>
                 <button
                   type="button"
-                  onClick={() => onRemovePayment(index)}
+                  onClick={() => handleRemovePayment(index)}
                   aria-label="Remove payment"
                   className={styles.removePaymentButton}
+                  disabled={removingPayment}
                 >
                   ×
                 </button>

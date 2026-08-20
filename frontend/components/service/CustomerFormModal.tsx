@@ -56,7 +56,7 @@ export function CustomerFormModal({ customer, onClose, onSubmit }: CustomerFormM
       !form.city.trim() ||
       !form.street_address.trim()
     ) {
-      setError("Fill in all required fields.");
+      setError("Enter all required fields.");
       return;
     }
 

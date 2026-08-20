@@ -14,10 +14,17 @@ interface PowerSourceRowProps {
 export function PowerSourceRow({ powerSource, onEdit, onDelete }: PowerSourceRowProps) {
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   async function handleConfirmDelete() {
     setDeleting(true);
-    await onDelete();
+    setDeleteError(null);
+    try {
+      await onDelete();
+    } catch {
+      setDeleteError("Couldn't delete this power source. Please try again.");
+      setDeleting(false);
+    }
   }
 
   return (
@@ -35,23 +42,29 @@ export function PowerSourceRow({ powerSource, onEdit, onDelete }: PowerSourceRow
       <td className={styles.numberCell}>{powerSource.actual_output_mwh.toLocaleString()}</td>
       <td className={styles.actionsCell}>
         {confirmingDelete ? (
-          <div className={styles.confirmRow}>
-            <span>Delete?</span>
-            <button
-              type="button"
-              onClick={handleConfirmDelete}
-              className={styles.confirmDeleteButton}
-              disabled={deleting}
-            >
-              {deleting ? "…" : "Yes"}
-            </button>
-            <button
-              type="button"
-              onClick={() => setConfirmingDelete(false)}
-              className={styles.cancelButton}
-            >
-              Cancel
-            </button>
+          <div className={styles.confirmWrap}>
+            <div className={styles.confirmRow}>
+              <span>Delete?</span>
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                className={styles.confirmDeleteButton}
+                disabled={deleting}
+              >
+                {deleting ? "…" : "Yes"}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setConfirmingDelete(false);
+                  setDeleteError(null);
+                }}
+                className={styles.cancelButton}
+              >
+                Cancel
+              </button>
+            </div>
+            {deleteError ? <p className={styles.deleteError}>{deleteError}</p> : null}
           </div>
         ) : (
           <div className={styles.actions}>
