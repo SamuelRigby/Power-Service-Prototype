@@ -1,0 +1,45 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 37, 69, 0.6);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 4rem 1.5rem;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.panel {
+  width: 100%;
+  max-width: 560px;
+  background: var(--color-white);
+  border-radius: 6px;
+  box-shadow: 0 20px 40px rgba(11, 37, 69, 0.25);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 1.75rem 0;
+}
+
+.title {
+  color: var(--color-navy-deep);
+  font-size: 1.4rem;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: var(--color-steel);
+  font-size: 1.75rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+.closeButton:hover {
+  color: var(--color-ink);
+}

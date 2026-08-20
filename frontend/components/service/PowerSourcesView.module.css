@@ -1,0 +1,197 @@
+.wrap {
+  padding: 3rem 1.5rem 4rem;
+}
+
+.headerRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.25rem;
+  margin-bottom: 2.25rem;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-copper);
+  margin-bottom: 0.4rem;
+}
+
+.heading {
+  color: var(--color-navy-deep);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+}
+
+.addButton {
+  background: var(--color-copper);
+  color: var(--color-white);
+  border: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.75rem 1.35rem;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s ease;
+}
+
+.addButton:hover {
+  background: var(--color-copper-hover);
+}
+
+.loadError {
+  background: rgba(193, 81, 30, 0.08);
+  border-left: 3px solid var(--color-copper);
+  color: var(--color-ink);
+  padding: 0.7rem 0.9rem;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  border-radius: 2px;
+}
+
+.loading {
+  color: var(--color-steel);
+}
+
+.empty {
+  background: var(--color-white);
+  border: 1px dashed var(--color-steel-light);
+  border-radius: 6px;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.emptyTitle {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-navy-deep);
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.emptyBody {
+  color: var(--color-steel);
+  margin-bottom: 1.5rem;
+}
+
+.tableWrap {
+  background: var(--color-white);
+  border: 1px solid var(--color-steel-light);
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.table th {
+  text-align: left;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-steel);
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid var(--color-bg-alt);
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid var(--color-bg-alt);
+  white-space: nowrap;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.nameCell {
+  color: var(--color-navy-deep);
+  font-weight: 600;
+}
+
+.typeCell {
+  color: var(--color-ink);
+  text-transform: capitalize;
+}
+
+.typeDot {
+  display: inline-block;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+.numberCell {
+  font-family: var(--font-mono);
+  color: var(--color-ink);
+}
+
+.actionsCell {
+  text-align: right;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+.editButton,
+.deleteButton,
+.cancelButton {
+  background: none;
+  border: 1px solid var(--color-steel-light);
+  color: var(--color-ink);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.editButton:hover {
+  border-color: var(--color-copper);
+  color: var(--color-copper);
+}
+
+.deleteButton:hover {
+  border-color: #b3261e;
+  color: #b3261e;
+}
+
+.confirmRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+
+.confirmDeleteButton {
+  background: #b3261e;
+  color: var(--color-white);
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.confirmDeleteButton:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}

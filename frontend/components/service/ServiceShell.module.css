@@ -1,0 +1,13 @@
+.main {
+  background: var(--color-bg);
+  min-height: calc(100vh - 4.5rem);
+}
+
+.checking {
+  background: var(--color-bg);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-steel);
+}

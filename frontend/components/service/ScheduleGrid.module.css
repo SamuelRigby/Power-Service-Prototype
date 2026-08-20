@@ -1,0 +1,71 @@
+.gridWrap {
+  background: var(--color-white);
+  border: 1px solid var(--color-steel-light);
+  border-radius: 6px;
+  overflow-x: auto;
+  /* Drag-painting across cells shouldn't select page text as a side effect. */
+  user-select: none;
+}
+
+.grid {
+  border-collapse: collapse;
+}
+
+.cornerCell,
+.hourHeader {
+  position: sticky;
+  top: 0;
+  background: var(--color-white);
+  z-index: 2;
+}
+
+.cornerCell {
+  left: 0;
+  z-index: 3;
+  width: 2.75rem;
+}
+
+.hourHeader {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-steel);
+  padding: 0.5rem 0.35rem;
+  border-bottom: 1px solid var(--color-bg-alt);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.dayHeader {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--color-white);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-navy-deep);
+  padding: 0 0.75rem;
+  border-right: 1px solid var(--color-bg-alt);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.cellWrap {
+  padding: 0;
+  border: 1px solid var(--color-bg-alt);
+}
+
+.cell {
+  display: block;
+  width: 2.25rem;
+  height: 2rem;
+  padding: 0;
+  border: none;
+  background: var(--color-bg);
+  cursor: pointer;
+  transition: box-shadow 0.1s ease;
+}
+
+.cell:hover {
+  box-shadow: inset 0 0 0 2px var(--color-copper);
+}

@@ -12,7 +12,7 @@ export class ApiError extends Error {
   }
 }
 
-interface ApiFetchOptions extends Omit<RequestInit, "body"> {
+export interface ApiFetchOptions extends Omit<RequestInit, "body"> {
   body?: unknown;
   /** JWT from a prior login, sent as `Authorization: Bearer <token>`. */
   token?: string;
